@@ -1,7 +1,0 @@
-Timestamp,Topic,Tone,User Choice,Outcome
-2025-04-16 20:50:10,hr,urgent,2,Safe - Reported
-2025-04-16 20:54:20,finance,friendly,2,Safe - Reported
-2025-04-16 21:05:25,student portal,threatening,report,Safe - Reported
-2025-04-16 21:10:20,finance,urgent,report,Safe - Reported
-2025-04-16 21:10:41,finance,friendly,click,Unsafe - Clicked link
-2025-04-16 21:10:55,finance,urgent,click,Unsafe - Clicked link

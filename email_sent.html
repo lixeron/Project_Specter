@@ -1,7 +1,0 @@
-{% extends "layout.html" %}
-{% block content %}
-<h4>✅ Email Sent to {{ recipient }}</h4>
-<p><strong>Preview:</strong></p>
-<pre style="white-space: pre-wrap;">{{ email }}</pre>
-<a href="{{ url_for('test') }}" class="btn btn-primary mt-3">Back</a>
-{% endblock %}

@@ -1,8 +1,0 @@
-{% extends "layout.html" %}
-{% block content %}
-<div class="alert alert-info">
-    <strong>Feedback:</strong> {{ feedback }}
-</div>
-<a href="{{ url_for('test') }}" class="btn btn-primary">Try Another</a>
-<a href="{{ url_for('stats') }}" class="btn btn-secondary">View Stats</a>
-{% endblock %}
