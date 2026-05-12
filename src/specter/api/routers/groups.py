@@ -7,6 +7,8 @@ from sqlalchemy.orm import selectinload
 from specter.api.deps import CurrentUser, DbSession, ManagerUser
 from specter.models.database import TargetGroup, User
 from specter.models.schemas import (
+    CsvImportRequest,
+    CsvImportResponse,
     MembersAddRequest,
     MembersRemoveRequest,
     TargetGroupCreate,
@@ -157,6 +159,72 @@ async def remove_members(
     remove_ids = set(body.user_ids)
     group.members = [m for m in group.members if m.id not in remove_ids]
     await db.flush()
+
+
+# ── CSV Import ───────────────────────────────────────────────
+
+
+@router.post("/import", response_model=CsvImportResponse, status_code=status.HTTP_201_CREATED)
+async def import_targets(
+    body: CsvImportRequest,
+    current_user: ManagerUser,
+    db: DbSession,
+) -> CsvImportResponse:
+    """Import targets from CSV data into a new target group.
+
+    Creates the group, then creates users (or reuses existing by email)
+    and adds them as members.
+    """
+    # Create the group
+    group = TargetGroup(
+        org_id=current_user.org_id,
+        name=body.group_name,
+    )
+    db.add(group)
+    await db.flush()
+
+    imported = 0
+    skipped = 0
+
+    for target in body.targets:
+        # Check if user already exists in this org
+        result = await db.execute(
+            select(User).where(
+                User.email == target.email,
+                User.org_id == current_user.org_id,
+            )
+        )
+        existing_user = result.scalar_one_or_none()
+
+        if existing_user:
+            # Add existing user to group if not already a member
+            if existing_user not in group.members:
+                group.members.append(existing_user)
+                imported += 1
+            else:
+                skipped += 1
+        else:
+            # Create new target user
+            user = User(
+                org_id=current_user.org_id,
+                email=target.email,
+                name=target.name,
+                role=target.role or "target",
+                department=target.department,
+            )
+            db.add(user)
+            await db.flush()
+            group.members.append(user)
+            imported += 1
+
+    await db.flush()
+
+    return CsvImportResponse(
+        group_name=group.name,
+        group_id=group.id,
+        imported_count=imported,
+        skipped_count=skipped,
+    )
 
 
 # ── Helpers ──────────────────────────────────────────────────

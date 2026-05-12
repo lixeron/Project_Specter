@@ -116,6 +116,25 @@ class MembersRemoveRequest(BaseModel):
     user_ids: list[str]
 
 
+class CsvTargetRow(BaseModel):
+    email: EmailStr
+    name: str
+    department: str | None = None
+    role: str | None = None
+
+
+class CsvImportRequest(BaseModel):
+    group_name: str = Field(..., min_length=1, max_length=255)
+    targets: list[CsvTargetRow]
+
+
+class CsvImportResponse(BaseModel):
+    group_name: str
+    group_id: str
+    imported_count: int
+    skipped_count: int
+
+
 # ── Campaign ─────────────────────────────────────────────────
 
 
