@@ -1,16 +1,15 @@
 """FastAPI application factory."""
 
-from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from specter import __version__
+from specter.api.routers import auth, campaigns, groups, health
 from specter.config import get_settings
 from specter.db import init_db
-
-from specter.api.routers import auth, campaigns, groups, health
 
 
 @asynccontextmanager
@@ -31,7 +30,7 @@ def create_app() -> FastAPI:
 
     app = FastAPI(
         title="Specter",
-        description="Adversary Simulation Platform — multi-vector social engineering testing & training",
+        description="Adversary simulation platform — social engineering testing & training",
         version=__version__,
         docs_url="/api/docs" if settings.debug else None,
         redoc_url="/api/redoc" if settings.debug else None,

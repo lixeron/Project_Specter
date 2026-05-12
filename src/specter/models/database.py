@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import (
     JSON,
     Boolean,
+    Column,
     DateTime,
     Float,
     ForeignKey,
@@ -30,7 +31,7 @@ def generate_uuid() -> str:
 
 
 # ── Association tables ───────────────────────────────────────
-from sqlalchemy import Column
+
 
 target_group_members = Table(
     "target_group_members",
@@ -167,12 +168,8 @@ class Simulation(Base):
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
-    campaign_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("campaigns.id"), nullable=False
-    )
-    target_user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("users.id"), nullable=False
-    )
+    campaign_id: Mapped[str] = mapped_column(String(36), ForeignKey("campaigns.id"), nullable=False)
+    target_user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"), nullable=False)
     vector: Mapped[str] = mapped_column(String(20), nullable=False)
     difficulty_tier: Mapped[str] = mapped_column(String(20), default="intermediate")
     content: Mapped[dict | None] = mapped_column(JSON, nullable=True)
@@ -185,9 +182,7 @@ class Simulation(Base):
     # Relationships
     campaign: Mapped["Campaign"] = relationship(back_populates="simulations")
     target_user: Mapped["User"] = relationship()
-    events: Mapped[list["Event"]] = relationship(
-        back_populates="simulation", cascade="all, delete"
-    )
+    events: Mapped[list["Event"]] = relationship(back_populates="simulation", cascade="all, delete")
 
 
 # ── Event ────────────────────────────────────────────────────

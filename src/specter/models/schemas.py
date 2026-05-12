@@ -13,7 +13,6 @@ from specter.models.enums import (
     VectorType,
 )
 
-
 # ── Auth ─────────────────────────────────────────────────────
 
 

@@ -99,7 +99,9 @@ def register(org_name: str, name: str, email: str, password: str) -> None:
         elif resp.status_code == 409:
             console.print("[red]Email already registered.[/red]")
         else:
-            console.print(f"[red]Registration failed: {resp.json().get('detail', resp.status_code)}[/red]")
+            console.print(
+                f"[red]Registration failed: {resp.json().get('detail', resp.status_code)}[/red]"
+            )
     except httpx.ConnectError:
         console.print(f"[red]Could not connect to {api_url}[/red]")
 
@@ -424,7 +426,7 @@ def targets_import(csv_file: str, group_name: str) -> None:
 
     # Validate required columns
     required = {"email", "name"}
-    headers = {h.lower().strip() for h in rows[0].keys()}
+    headers = {h.lower().strip() for h in rows[0]}
     missing = required - headers
     if missing:
         console.print(f"[red]CSV missing required columns: {', '.join(missing)}[/red]")
@@ -447,7 +449,9 @@ def targets_import(csv_file: str, group_name: str) -> None:
 
     if resp.status_code == 201:
         data = resp.json()
-        console.print(f"[green]Imported {data['imported_count']} targets into '{data['group_name']}'[/green]")
+        console.print(
+            f"[green]Imported {data['imported_count']} targets into '{data['group_name']}'[/green]"
+        )
         if data.get("skipped_count", 0) > 0:
             console.print(f"[yellow]Skipped {data['skipped_count']} (duplicate emails)[/yellow]")
     else:

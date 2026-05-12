@@ -1,5 +1,6 @@
 """CLI HTTP client — handles auth tokens and API requests."""
 
+import contextlib
 import json
 import sys
 from pathlib import Path
@@ -19,7 +20,7 @@ def _get_api_url() -> str:
     config_file = CONFIG_DIR / "config.json"
     if config_file.exists():
         config = json.loads(config_file.read_text())
-        return config.get("api_url", "http://localhost:8000")
+        return str(config.get("api_url", "http://localhost:8000"))
     return "http://localhost:8000"
 
 
@@ -36,7 +37,8 @@ def load_tokens() -> dict[str, str] | None:
     if not TOKEN_FILE.exists():
         return None
     try:
-        return json.loads(TOKEN_FILE.read_text())
+        data: dict[str, str] = json.loads(TOKEN_FILE.read_text())
+        return data
     except (json.JSONDecodeError, KeyError):
         return None
 
@@ -66,11 +68,9 @@ def save_api_url(url: str) -> None:
     """Save the API URL to config."""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     config_file = CONFIG_DIR / "config.json"
-    config = {}
+    config: dict = {}
     if config_file.exists():
-        try:
+        with contextlib.suppress(json.JSONDecodeError):
             config = json.loads(config_file.read_text())
-        except json.JSONDecodeError:
-            pass
     config["api_url"] = url.rstrip("/")
     config_file.write_text(json.dumps(config, indent=2))
