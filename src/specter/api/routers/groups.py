@@ -182,6 +182,7 @@ async def import_targets(
     )
     db.add(group)
     await db.flush()
+    await db.refresh(group, ["members"])
 
     imported = 0
     skipped = 0

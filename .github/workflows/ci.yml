@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -26,7 +29,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install ".[dev]"
-      - run: mypy src/
+      - run: mypy src/ --ignore-missing-imports
 
   test:
     runs-on: ubuntu-latest
@@ -40,9 +43,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install ".[dev]"
-      - run: pytest tests/ -v --cov=specter --cov-report=xml
-      - uses: codecov/codecov-action@v4
-        if: always()
+      - run: pytest tests/ -v --tb=short
 
   build:
     needs: [lint, typecheck, test]

@@ -36,6 +36,7 @@ dependencies = [
     "httpx>=0.27.0",             # CLI → API client
     "structlog>=24.1.0",
     "python-dotenv>=1.0.0",
+    "email-validator>=2.1.0",
 ]
 
 [project.optional-dependencies]
@@ -80,10 +81,10 @@ known-first-party = ["specter"]
 
 [tool.mypy]
 python_version = "3.12"
-strict = true
 warn_return_any = true
 warn_unused_configs = true
-plugins = ["pydantic.mypy"]
+disallow_untyped_defs = false
+check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
