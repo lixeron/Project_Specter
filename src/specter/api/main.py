@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from specter import __version__
-from specter.api.routers import auth, campaigns, groups, health
+from specter.api.routers import auth, campaigns, groups, health, simulations, tracking
 from specter.config import get_settings
 from specter.db import init_db
 
@@ -52,14 +52,10 @@ def create_app() -> FastAPI:
     app.include_router(auth.router, prefix=api_prefix)
     app.include_router(campaigns.router, prefix=api_prefix)
     app.include_router(groups.router, prefix=api_prefix)
+    app.include_router(simulations.router, prefix=api_prefix)
 
-    # Phase 2+ routers (uncomment as implemented):
-    # app.include_router(simulations.router, prefix=api_prefix)
-    # app.include_router(tracking.router)  # No prefix — /t/{token}
-    # app.include_router(analytics.router, prefix=api_prefix)
-    # app.include_router(training.router, prefix=api_prefix)
-    # app.include_router(admin.router, prefix=api_prefix)
-    # app.include_router(reports.router, prefix=api_prefix)
+    # Tracking routes are public — no /api/v1 prefix
+    app.include_router(tracking.router)
 
     return app
 

@@ -464,20 +464,66 @@ def targets_import(csv_file: str, group_name: str) -> None:
 
 @cli.command()
 @click.option("--vector", default="email", help="Attack vector")
-@click.option("--topic", default="general", help="Phishing topic")
+@click.option("--topic", default="general", help="Phishing topic (general, credential, bec)")
 @click.option("--tone", default="urgent", help="Email tone")
 def simulate(vector: str, topic: str, tone: str) -> None:
-    """Quick-run a single simulation (dev/testing)."""
+    """Generate a simulated phishing email and display it."""
+    from specter.cli.client import get_client
+
+    client = get_client()
+    resp = client.post(
+        "/api/v1/simulations/quick",
+        json={"vector": vector, "topic": topic, "tone": tone},
+    )
+
+    if resp.status_code != 201:
+        detail = resp.json().get("detail", resp.status_code)
+        console.print(f"[red]Simulation failed: {detail}[/red]")
+        return
+
+    data = resp.json()
+    email = data["email"]
+
+    console.print()
     console.print(
         Panel(
-            f"Vector: [cyan]{vector}[/cyan]\n"
-            f"Topic:  [cyan]{topic}[/cyan]\n"
-            f"Tone:   [cyan]{tone}[/cyan]\n\n"
-            "[yellow]LLM integration coming in Phase 2[/yellow]",
-            title="[bold]Quick Simulate[/bold]",
-            border_style="blue",
+            f"[dim]From:[/dim]    {email['sender_name']} <{email['sender_email']}>\n"
+            f"[dim]Subject:[/dim] [bold]{email['subject']}[/bold]\n"
+            f"{'─' * 60}\n"
+            f"{email['body_text']}",
+            title="[bold red]Generated Phishing Email[/bold red]",
+            border_style="red",
+            padding=(1, 2),
         )
     )
+
+    console.print()
+    red_flags = data.get("red_flags", [])
+    flags_text = "\n".join(f"  [red]•[/red] {flag}" for flag in red_flags)
+    console.print(
+        Panel(
+            flags_text or "  No red flags identified",
+            title="[bold yellow]🚩 Red Flags[/bold yellow]",
+            border_style="yellow",
+        )
+    )
+
+    tactics = data.get("social_engineering_tactics", [])
+    if tactics:
+        tactics_str = "  " + " │ ".join(f"[cyan]{t}[/cyan]" for t in tactics)
+        console.print(
+            Panel(
+                tactics_str,
+                title="[bold cyan]🧠 Tactics Used[/bold cyan]",
+                border_style="cyan",
+            )
+        )
+
+    console.print()
+    console.print(f"  [dim]Tracking URL:[/dim]  {data['tracking_url']}")
+    console.print(f"  [dim]Training URL:[/dim]  {data['training_url']}")
+    console.print(f"  [dim]Simulation ID:[/dim] {data['simulation_id']}")
+    console.print()
 
 
 # ── Stats ────────────────────────────────────────────────────
