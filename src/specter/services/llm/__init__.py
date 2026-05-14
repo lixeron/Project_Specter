@@ -37,7 +37,7 @@ async def generate_phishing_email(
     Uses whichever LLM provider is configured.
     """
     provider = get_llm_provider()
-    return await provider.generate_phishing_email(
+    result: dict[str, Any] = await provider.generate_phishing_email(
         target_name=target_name,
         target_department=target_department,
         org_name=org_name,
@@ -45,3 +45,4 @@ async def generate_phishing_email(
         tone=tone,
         difficulty=difficulty,
     )
+    return result

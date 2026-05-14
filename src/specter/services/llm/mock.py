@@ -159,10 +159,9 @@ class MockProvider:
         # Personalize the template
         org_domain = org_name.lower().replace(" ", "") + ".com"
         for field in ["body_html", "body_text", "sender_email"]:
-            template[field] = (
-                template[field]
-                .replace("{target_name}", target_name)
-                .replace("{org_domain}", org_domain)
+            val = str(template[field])
+            template[field] = val.replace("{target_name}", target_name).replace(
+                "{org_domain}", org_domain
             )
 
         return template

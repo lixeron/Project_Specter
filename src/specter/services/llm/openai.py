@@ -109,7 +109,7 @@ class OpenAIProvider:
             )
             resp.raise_for_status()
             data = resp.json()
-            return data["choices"][0]["message"]["content"]
+            return str(data["choices"][0]["message"]["content"])
 
     async def generate_structured(
         self,
@@ -129,7 +129,8 @@ class OpenAIProvider:
         cleaned = cleaned.strip()
 
         try:
-            return json.loads(cleaned)
+            result: dict[str, Any] = json.loads(cleaned)
+            return result
         except json.JSONDecodeError:
             logger.error("Failed to parse LLM response as JSON: %s", raw[:200])
             raise
