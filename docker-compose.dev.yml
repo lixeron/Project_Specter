@@ -1,0 +1,23 @@
+# Development overrides — use with:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Adds hot reload, debug logging, and volume mounts for live editing.
+
+services:
+  api:
+    build:
+      target: production
+    command: >
+      uvicorn specter.api.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --log-level debug
+    volumes:
+      - ./src:/app/src:ro
+      - ./.env:/app/.env:ro
+    environment:
+      - DEBUG=true
+      - APP_ENV=development
+      - LOG_LEVEL=debug
+      - LOG_FORMAT=console

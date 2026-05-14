@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
 
+    # ── Logging ──────────────────────────────
+    log_level: str = "INFO"
+    log_format: str = "console"  # "console" or "json"
+
     # ── LLM (Phase 2) ───────────────────────
     llm_provider: str = "mock"
     openai_api_key: str | None = None

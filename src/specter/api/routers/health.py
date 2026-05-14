@@ -1,9 +1,10 @@
-"""Health check endpoint."""
+"""Health check and metrics endpoints."""
 
 from fastapi import APIRouter
 from sqlalchemy import text
 
 from specter import __version__
+from specter.api.middleware import metrics
 from specter.config import get_settings
 from specter.db import async_session_factory
 from specter.models.schemas import HealthResponse
@@ -16,7 +17,6 @@ async def health_check() -> HealthResponse:
     """Check API and database health."""
     settings = get_settings()
 
-    # Test database connectivity
     db_status = "healthy"
     try:
         async with async_session_factory() as session:
@@ -30,3 +30,17 @@ async def health_check() -> HealthResponse:
         database=db_status,
         environment=settings.app_env,
     )
+
+
+@router.get("/metrics")
+async def get_metrics() -> dict:
+    """Prometheus-style metrics endpoint.
+
+    Returns request counts, latency percentiles, status code distribution,
+    and per-endpoint breakdowns.
+    """
+    return {
+        "app": "specter",
+        "version": __version__,
+        **metrics.get_metrics(),
+    }

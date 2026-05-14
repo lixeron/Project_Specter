@@ -7,15 +7,20 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from specter import __version__
+from specter.api.middleware import RequestLoggingMiddleware
 from specter.api.routers import auth, campaigns, groups, health, simulations, tracking
 from specter.config import get_settings
 from specter.db import init_db
+from specter.logging import setup_logging
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Startup and shutdown events."""
     settings = get_settings()
+
+    # Configure structured logging
+    setup_logging()
 
     # Auto-create tables in development (use Alembic in production)
     if not settings.is_production:
@@ -37,7 +42,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # ── CORS ─────────────────────────────────
+    # ── Middleware (order matters — last added = first executed) ──
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"] if settings.debug else [settings.base_url],
@@ -45,6 +50,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(RequestLoggingMiddleware)
 
     # ── Routers ──────────────────────────────
     api_prefix = "/api/v1"
