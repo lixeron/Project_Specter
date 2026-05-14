@@ -482,16 +482,24 @@ def simulate(vector: str, topic: str, tone: str) -> None:
         return
 
     data = resp.json()
-    email = data["email"]
+    content = data["content"]
+
+    sender = content.get("sender_name", "N/A")
+    email_addr = content.get("sender_email", "")
+    subject = content.get("subject", "N/A")
+    body = content.get(
+        "body_text",
+        content.get("script", content.get("description", "No preview")),
+    )
 
     console.print()
     console.print(
         Panel(
-            f"[dim]From:[/dim]    {email['sender_name']} <{email['sender_email']}>\n"
-            f"[dim]Subject:[/dim] [bold]{email['subject']}[/bold]\n"
+            f"[dim]From:[/dim]    {sender} <{email_addr}>\n"
+            f"[dim]Subject:[/dim] [bold]{subject}[/bold]\n"
             f"{'─' * 60}\n"
-            f"{email['body_text']}",
-            title="[bold red]Generated Phishing Email[/bold red]",
+            f"{body}",
+            title=f"[bold red]Generated Simulation ({data['vector']})[/bold red]",
             border_style="red",
             padding=(1, 2),
         )

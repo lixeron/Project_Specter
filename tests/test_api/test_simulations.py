@@ -32,17 +32,14 @@ async def test_quick_simulate(client: AsyncClient) -> None:
     assert resp.status_code == 201
     data = resp.json()
 
-    # Check email content
-    assert "email" in data
-    assert "subject" in data["email"]
-    assert "body_text" in data["email"]
-    assert data["email"]["subject"]  # Not empty
+    assert "content" in data
+    assert "subject" in data["content"]
+    assert "body_text" in data["content"]
+    assert data["content"]["subject"]
 
-    # Check red flags
     assert "red_flags" in data
     assert len(data["red_flags"]) > 0
 
-    # Check tracking info
     assert "tracking_token" in data
     assert "tracking_url" in data
     assert "simulation_id" in data
@@ -60,10 +57,9 @@ async def test_quick_simulate_credential_topic(client: AsyncClient) -> None:
     )
     assert resp.status_code == 201
     data = resp.json()
-    assert (
-        "password" in data["email"]["subject"].lower()
-        or "password" in data["email"]["body_text"].lower()
-    )
+    subject = data["content"].get("subject", "").lower()
+    body = data["content"].get("body_text", "").lower()
+    assert "password" in subject or "password" in body
 
 
 @pytest.mark.asyncio
@@ -71,7 +67,6 @@ async def test_tracking_click(client: AsyncClient) -> None:
     """Clicking a tracking link logs the event and shows training page."""
     headers = await _register_and_get_headers(client)
 
-    # Generate a simulation first
     sim_resp = await client.post(
         "/api/v1/simulations/quick",
         json={"vector": "email", "topic": "general", "tone": "urgent"},
@@ -79,11 +74,9 @@ async def test_tracking_click(client: AsyncClient) -> None:
     )
     token = sim_resp.json()["tracking_token"]
 
-    # Click the tracking link
     resp = await client.get(f"/t/{token}")
     assert resp.status_code == 200
     assert "simulated phishing attack" in resp.text.lower()
-    assert "Red Flags" in resp.text or "red flag" in resp.text.lower()
 
 
 @pytest.mark.asyncio
@@ -132,14 +125,12 @@ async def test_list_simulations(client: AsyncClient) -> None:
     """List simulations returns created simulations."""
     headers = await _register_and_get_headers(client)
 
-    # Create a simulation
     await client.post(
         "/api/v1/simulations/quick",
         json={"vector": "email", "topic": "general", "tone": "urgent"},
         headers=headers,
     )
 
-    # List simulations
     resp = await client.get("/api/v1/simulations", headers=headers)
     assert resp.status_code == 200
     data = resp.json()

@@ -20,6 +20,8 @@ classifiers = [
     "Topic :: Security",
 ]
 dependencies = [
+    "qrcode>=7.4",
+    "pillow>=10.0",
     "structlog>=24.1.0",
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.30.0",
