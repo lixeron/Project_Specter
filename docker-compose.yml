@@ -17,16 +17,13 @@ services:
       timeout: 5s
       retries: 3
 
-  worker:
+  web:
     build:
-      context: .
-      target: production
-    command: echo "Celery worker — coming in Phase 2"
-    env_file: .env
+      context: ./web
+    ports:
+      - "3000:80"
     depends_on:
-      - redis
-    profiles:
-      - full  # Only start with: docker compose --profile full up
+      - api
 
   postgres:
     image: postgres:16-alpine
