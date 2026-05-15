@@ -7,7 +7,6 @@ Specter helps organizations test and train employees against social engineering 
 Built as an open-core platform: the free tier covers email and QR attacks with a web dashboard, while the Pro tier adds SMS, credential harvesting, pretexting, adaptive AI difficulty, and compliance reports.
 
 ---
-
 ## Features
 
 **Attack Vectors**
