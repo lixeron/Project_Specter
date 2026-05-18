@@ -11,7 +11,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 
 const NAV_ITEMS = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/campaigns", icon: Crosshair, label: "Campaigns" },
   { to: "/targets", icon: Users, label: "Targets" },
   { to: "/simulate", icon: Zap, label: "Simulate" },
@@ -24,32 +24,28 @@ export default function Layout() {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-60 bg-zinc-900 border-r border-zinc-800 flex flex-col">
+      <aside className="w-56 bg-[#0a0a0e] border-r border-white/[0.04] flex flex-col shrink-0">
         {/* Logo */}
-        <div className="p-5 border-b border-zinc-800">
+        <div className="px-5 py-5 border-b border-white/[0.04]">
           <div className="flex items-center gap-2.5">
-            <Ghost className="w-7 h-7 text-specter-red" />
-            <span className="text-lg font-bold tracking-tight">
+            <Ghost className="w-6 h-6 text-red-500" />
+            <span className="text-base font-bold tracking-tight font-mono">
               SPECTER
             </span>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1 font-mono">
-            adversary simulation
-          </p>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-0.5">
           {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200 ${
                   isActive
-                    ? "bg-zinc-800 text-white"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
+                    ? "bg-white/[0.05] text-white"
+                    : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02]"
                 }`
               }
             >
@@ -60,20 +56,20 @@ export default function Layout() {
         </nav>
 
         {/* Logout */}
-        <div className="p-3 border-t border-zinc-800">
+        <div className="p-3 border-t border-white/[0.04]">
           <button
             onClick={logout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 w-full transition-colors"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.02] w-full transition-all"
           >
             <LogOut className="w-4 h-4" />
-            Logout
+            Log out
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto bg-zinc-950">
-        <div className="max-w-6xl mx-auto p-8">
+      <main className="flex-1 overflow-auto bg-[#06060a]">
+        <div className="max-w-6xl mx-auto px-8 py-8">
           <Outlet />
         </div>
       </main>

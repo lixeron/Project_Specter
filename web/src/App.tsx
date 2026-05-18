@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Layout from "./components/Layout";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Campaigns from "./pages/Campaigns";
@@ -19,12 +20,21 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Public landing page */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />
+        }
+      />
       <Route
         path="/login"
         element={
-          isAuthenticated ? <Navigate to="/" replace /> : <Login />
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
         }
       />
+
+      {/* Protected app routes */}
       <Route
         element={
           <ProtectedRoute>
@@ -32,7 +42,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/targets" element={<Targets />} />
         <Route path="/simulate" element={<Simulate />} />
