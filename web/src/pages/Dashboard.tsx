@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Crosshair, Zap, Users, Activity, ArrowUpRight, Shield, Plus, ChevronRight } from "lucide-react";
+import { Crosshair, Zap, Users, Activity, ArrowUpRight, Plus, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api, type Campaign, type MetricsData } from "../api/client";
 

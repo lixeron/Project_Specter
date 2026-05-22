@@ -21,7 +21,7 @@ function ParticleGrid() {
   const mouseRef = useRef({ x: -1000, y: -1000 });
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = canvasRef.current as HTMLCanvasElement;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
     let animId: number;

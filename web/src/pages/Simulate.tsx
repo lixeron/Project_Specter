@@ -145,7 +145,7 @@ export default function Simulate() {
                 <p className="text-zinc-400 text-sm mb-4">
                   {String(content.poster_body || "")}
                 </p>
-                {content.qr_data_uri && (
+                {!!content.qr_data_uri && (
                   <img
                     src={String(content.qr_data_uri)}
                     alt="QR Code"

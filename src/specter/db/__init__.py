@@ -12,7 +12,7 @@ settings = get_settings()
 connect_args = {"check_same_thread": False} if settings.is_sqlite else {}
 
 engine = create_async_engine(
-    settings.async_database_url,
+    settings.database_url,
     echo=settings.debug,
     connect_args=connect_args,
 )
