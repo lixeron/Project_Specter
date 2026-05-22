@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from specter.config import get_settings
+from specter.services.llm.gemini import GeminiProvider
 from specter.services.llm.mock import MockProvider
 from specter.services.llm.openai import OpenAIProvider
 
@@ -16,6 +17,9 @@ def get_llm_provider() -> Any:
     """
     settings = get_settings()
     provider_name = settings.llm_provider.lower()
+
+    if provider_name == "gemini" and settings.gemini_api_key:
+        return GeminiProvider()
 
     if provider_name == "openai" and settings.openai_api_key:
         return OpenAIProvider()

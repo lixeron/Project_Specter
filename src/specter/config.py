@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     # ── Redis ────────────────────────────────
     redis_url: str = "redis://localhost:6379/0"
 
+    # ── CORS ─────────────────────────────────
+    allowed_origins: str = ""  # comma-separated origins for production
+
     # ── Auth ─────────────────────────────────
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 15
@@ -43,6 +46,7 @@ class Settings(BaseSettings):
     llm_provider: str = "mock"
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
+    gemini_api_key: str | None = None
     ollama_base_url: str = "http://localhost:11434"
 
     # ── Email (Phase 2) ─────────────────────
@@ -61,6 +65,23 @@ class Settings(BaseSettings):
     @property
     def is_sqlite(self) -> bool:
         return "sqlite" in self.database_url
+
+    @property
+    def async_database_url(self) -> str:
+        """Convert DATABASE_URL to async-compatible scheme."""
+        url = self.database_url
+        if url.startswith("postgres://"):
+            return url.replace("postgres://", "postgresql+asyncpg://", 1)
+        if url.startswith("postgresql://"):
+            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
+
+    @property
+    def cors_origins(self) -> list[str]:
+        """Parse allowed origins for CORS."""
+        if self.allowed_origins:
+            return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
+        return ["*"] if not self.is_production else []
 
 
 @lru_cache
