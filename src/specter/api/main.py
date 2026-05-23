@@ -49,7 +49,7 @@ def create_app() -> FastAPI:
     # 2. Add CORS LAST (so it executes FIRST and catches the preflight)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.cors_origins,
+        allow_origins=["https://project-specter.vercel.app"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
