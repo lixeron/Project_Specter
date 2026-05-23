@@ -43,7 +43,7 @@ def create_app() -> FastAPI:
     )
 
     # ── Middleware (order matters — last added = first executed) ──
-# 1. Add your custom middleware FIRST (so it executes internally)
+    # 1. Add your custom middleware FIRST (so it executes internally)
     app.add_middleware(RequestLoggingMiddleware)
 
     # 2. Add CORS LAST (so it executes FIRST and catches the preflight)
