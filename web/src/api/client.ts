@@ -134,6 +134,10 @@ class ApiClient {
     path: string,
     options: RequestInit = {}
   ): Promise<T> {
+    if (this.isDemo()) {
+      throw new Error("Demo mode");
+    }
+
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
@@ -177,12 +181,6 @@ class ApiClient {
 
   // Auth Methods
   async register(orgName: string, name: string, email: string, password: string) {
-    if (this.isDemo()) {
-      const token = "demo_simulation_bypass_token_2026";
-      this.setToken(token);
-      localStorage.setItem("specter_refresh", "demo_refresh_token_2026");
-      return { access_token: token, refresh_token: "demo_refresh_token_2026" };
-    }
     return this.request<{ access_token: string; refresh_token: string }>(
       "/auth/register",
       {
@@ -193,7 +191,7 @@ class ApiClient {
   }
 
   async login(email: string, password: string) {
-    if (this.isDemo() || email.startsWith("demo")) {
+    if (email.startsWith("demo")) {
       const token = "demo_simulation_bypass_token_2026";
       this.setToken(token);
       localStorage.setItem("specter_refresh", "demo_refresh_token_2026");
