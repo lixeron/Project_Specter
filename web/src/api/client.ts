@@ -134,10 +134,6 @@ class ApiClient {
     path: string,
     options: RequestInit = {}
   ): Promise<T> {
-    if (this.isDemo()) {
-      throw new Error("Demo mode");
-    }
-
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
@@ -154,8 +150,10 @@ class ApiClient {
       });
 
       if (resp.status === 401) {
-        this.clearToken();
-        window.location.href = "/login";
+        if (!this.isDemo()) {
+          this.clearToken();
+          window.location.href = "/login";
+        }
         throw new Error("Unauthorized");
       }
 
