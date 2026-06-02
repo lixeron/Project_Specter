@@ -10,7 +10,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, register, error } = useAuth();
+  const { login, register, loginDemo, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -80,6 +80,27 @@ export default function Login() {
               {loading ? "..." : isRegister ? "Create Account" : "Sign In"}
             </button>
           </form>
+
+          <div className="relative flex py-4 items-center">
+            <div className="flex-grow border-t border-white/[0.04]"></div>
+            <span className="flex-shrink mx-3 text-[10px] uppercase tracking-wider font-mono text-zinc-600">sandbox environment</span>
+            <div className="flex-grow border-t border-white/[0.04]"></div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              loginDemo();
+              navigate("/dashboard");
+            }}
+            className="w-full relative group overflow-hidden border border-red-500/30 hover:border-red-500/60 bg-red-950/10 text-red-400 hover:text-white rounded-xl py-2.5 text-xs font-semibold uppercase tracking-wider transition-all duration-300"
+          >
+            <span className="relative flex items-center justify-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping absolute" />
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 relative" />
+              Bypass &amp; Launch Demo Console
+            </span>
+          </button>
 
           <div className="mt-5 text-center">
             <button

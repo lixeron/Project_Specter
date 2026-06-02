@@ -6,6 +6,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (orgName: string, name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  loginDemo: () => void;
   error: string | null;
 }
 
@@ -16,6 +17,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => !!localStorage.getItem("specter_token")
   );
   const [error, setError] = useState<string | null>(null);
+
+  const loginDemo = useCallback(() => {
+    setError(null);
+    api.setToken("demo_simulation_bypass_token_2026");
+    localStorage.setItem("specter_refresh", "demo_refresh_token_2026");
+    setIsAuthenticated(true);
+  }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     setError(null);
@@ -52,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, register, logout, error }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, register, logout, loginDemo, error }}>
       {children}
     </AuthContext.Provider>
   );
