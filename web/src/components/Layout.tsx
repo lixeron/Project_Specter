@@ -13,7 +13,7 @@ import {
   Menu,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
